@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import columninfo.*;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -90,7 +91,7 @@ public class TableBuilder {
 		HBox.setMargin(tableNameLabel, new Insets(3, 0, 0, 0));
 		TextField tableNameInput = new TextField();
 		tableNameInput.textProperty().bindBidirectional(newTableName);
-		tableNameInput.setText("Table1");
+		tableNameInput.setText("t");
 		HBox tableNameRow = new HBox(5, tableNameLabel, tableNameInput);
 		
 		//select table of column
@@ -312,31 +313,112 @@ public class TableBuilder {
 				connection.setCatalog(session.getDatabase());
 				Statement statement = connection.createStatement();
 				
-				String queryString = new String("CREATE TABLE " + newTableName.getValue());
-				String primaryKey;
+				String queryString;
+								
 				if(cols.size()>0){
-					queryString += " (";
+				
+					Collections.sort(cols, new ColPropTableComparator());
+					
+					ArrayList<SourceTable> tables 
+								= new ArrayList<SourceTable>();
+					
+					int tableIndex = 0;
+					String currentTable = cols.get(tableIndex).getTable();
+					tables.add(new SourceTable(currentTable, "t0"));
+					
+					String tempTable = "t" + tableIndex;
+					
+					String priString = " (id INT AUTO_INCREMENT PRIMARY KEY) ";
+					
+					queryString = "CREATE TEMPORARY TABLE " + tempTable + priString + "SELECT ";
 					
 					for(ColumnProperties c : cols){
-						
-						primaryKey = (c.getPrimary()) ? " PRIMARY KEY" : "";
-						
-						queryString += " " + c.getName() + " " + 
-								c.getType() + primaryKey + ",";
+						if(c.getTable().equals(currentTable)&&(cols.indexOf(c)!=cols.size()-1)){
+							tables.get(tableIndex).appendCol(c.getName());
+						}
+						else{
+							
+							ResultSet rs;
+							
+							if(cols.indexOf(c)==cols.size()-1){
+								if(!c.getTable().equals(currentTable)){
+									
+									queryString += tables.get(tableIndex).selectableCols();
+									queryString += " FROM " + currentTable + ";";
+									statement.execute(queryString);
+									
+									queryString = "SELECT COUNT(*) FROM " + tempTable + ";"; 
+									
+									rs = statement.executeQuery(queryString);
+									
+									if(rs.next())
+										tables.get(tableIndex).setRows(rs.getInt(1));
+									
+									currentTable = c.getTable();
+									tableIndex++;
+									tempTable = "t" + tableIndex;
+									tables.add(new SourceTable(currentTable, tempTable, c.getName()));
+									queryString = "CREATE TEMPORARY TABLE " + tempTable + priString + "SELECT ";
+								}
+								
+							}
+							
+							queryString += tables.get(tableIndex).selectableCols();
+							queryString += " FROM " + currentTable + ";";
+							statement.execute(queryString);
+							
+							queryString = "SELECT COUNT(*) FROM " + tempTable + ";"; 
+							
+							rs = statement.executeQuery(queryString);
+							
+							if(rs.next())
+								tables.get(tableIndex).setRows(rs.getInt(1));
+							
+							if(cols.indexOf(c)<cols.size()-1){
+								currentTable = c.getTable();
+								tableIndex++;
+								tempTable = "t" + tableIndex;
+								tables.add(new SourceTable(currentTable, tempTable, c.getName()));
+								queryString = "CREATE TEMPORARY TABLE " + tempTable + priString + "SELECT ";;
+							}
+						}
 					}
 					
-					queryString = queryString.substring(0, queryString.length()-1) + ");";
-				}
-				
-				statement.execute(queryString);
-				
-				if(cols.size()>0){
-								
-					for(int i = 0; i < cols.size(); i++){
-						queryString = "INSERT INTO " + newTableName.getValue() + "("
-								+ cols.get(i).getName() + ") SELECT " + cols.get(i).getName()
-								+ " FROM " + cols.get(i).getTable() + ";";
+					Collections.sort(tables, new MaxTableSizeComparator());
+					
+					queryString = "CREATE TABLE " + newTableName.getValue() + " AS SELECT * FROM t0";
+										
+					SourceTable prevTable = tables.get(0);
+					tables.remove(0);
+		
+					queryString = "CREATE TEMPORARY TABLE " + prevTable.getTemp() + "Sum "
+							 + "AS SELECT * FROM " + prevTable.getTemp();
+					
+					statement.execute(queryString);
+					
+					for( SourceTable t : tables){
+
+						String tableSumName = prevTable.getTemp() + "Sum";
+						
+						t.appendCols(prevTable.cols());
+						
+						queryString = "CREATE TEMPORARY TABLE " + t.getTemp() + "Sum AS SELECT " +
+								tableSumName + ".id, " + t.cols();
+						queryString = queryString.substring(0, queryString.length()-2);
+						queryString += " FROM " + tableSumName + " LEFT OUTER JOIN " + t.getTemp()
+								+ " ON " + tableSumName + ".id = " + t.getTemp() + ".id;";
+						
 						statement.execute(queryString);
+						
+						if(tables.indexOf(t)==tables.size()-1){
+							
+							tableSumName = t.getTemp() + "Sum";
+							
+							queryString = "CREATE TABLE " + newTableName.getValue() + " AS SELECT * FROM "
+									+ tableSumName;
+							statement.execute(queryString);
+						}
+						prevTable = t;
 					}
 				}
 				

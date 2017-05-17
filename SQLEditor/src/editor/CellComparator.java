@@ -6,7 +6,6 @@ public class CellComparator implements Comparator<String> {
 
 	@Override
 	public int compare(String s1, String s2) {
-		// TODO Auto-generated method stub
 		try{
 			double d1 = Double.parseDouble(s1.replace("%", "").replace("$", ""));
 			double d2 = Double.parseDouble(s2.replace("%", "").replace("$", ""));
