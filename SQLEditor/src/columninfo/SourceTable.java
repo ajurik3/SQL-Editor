@@ -1,10 +1,25 @@
 package columninfo;
 
+/*
+ * This class contains fields holding information about a selection
+ * from a source table which will be added to a new table using
+ * TableBuilder.
+ */
+
 public class SourceTable {
 	
+	//MySQL name of the source table
 	String name;
+	
+	//number of rows defined in the columns selected from the table
 	int rows;
+	
+	//name of columns selected from table, separated
+	//by commas to be inserted into select statement
 	String cols;
+	
+	//the name of the temporary table created for these columns
+	//before they are joined into the final table
 	String tempTable;
 	
 	public SourceTable(){
@@ -40,6 +55,8 @@ public class SourceTable {
 		return tempTable;
 	}
 	
+	//returns the column string without the comma appended to the final
+	//column name for easy insertion into select statements
 	public String selectableCols(){
 		return cols.substring(0, cols.length()-2);
 	}
@@ -64,8 +81,9 @@ public class SourceTable {
 		cols += c + ", ";
 	}
 	
+	//c must contain a sequence of column names separated by
+	//commas with a comma following the last name
 	public void appendCols(String c){
 		cols = c + cols;
 	}
-	
 }

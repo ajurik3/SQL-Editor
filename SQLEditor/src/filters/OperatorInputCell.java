@@ -23,7 +23,8 @@ public class OperatorInputCell extends TableCell<Filter, ComboBox<String>>{
 		     else{
 		    	 	    	 
 		    	 item.valueProperty().addListener(new ChangeListener<String>(){
-		    		@Override 
+		    		@SuppressWarnings("rawtypes")
+					@Override 
 					public void changed(ObservableValue arg0, String oldValue, String newValue ){
 		    			if(newValue!=null)
 							sendQueryEvent();

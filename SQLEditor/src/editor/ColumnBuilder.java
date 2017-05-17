@@ -97,6 +97,7 @@ public class ColumnBuilder {
 		}
 		
 		tableSelect.valueProperty().addListener(new ChangeListener<String>(){
+			@SuppressWarnings("rawtypes")
 			public void changed(ObservableValue arg0, String oldValue, String newValue){
 				fillColumnList(newValue);
 			}
@@ -142,6 +143,7 @@ public class ColumnBuilder {
 		columnNames.setMaxWidth(200);
 		
 		columnNames.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>(){
+			@SuppressWarnings("rawtypes")
 			public void changed(ObservableValue arg0, String oldValue, String newValue){
 				
 				if(newValue!=null){

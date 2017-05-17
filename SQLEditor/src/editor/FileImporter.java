@@ -24,8 +24,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -33,7 +31,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Callback;
 
 public class FileImporter {
 
@@ -47,7 +44,7 @@ private File selectedFile;
 	private ObservableList<String> columns = FXCollections.observableArrayList();
 	private ObservableList<String> columnTypes = FXCollections.observableArrayList();
 	private String generatedKey;
-	private TableView<ColumnProperties> columnMeta = ColumnProperties.getEditableColumns();
+	private TableView<ColumnProperties> columnMeta = ColumnProperties.getPropertyColumns();
 
 	private SessionConfig session;
 	
@@ -56,6 +53,7 @@ private File selectedFile;
 		session = currentSession;
 		
 		pathName.addListener(new ChangeListener<String>(){
+			@SuppressWarnings("rawtypes")
 			@Override
 			public void changed(ObservableValue obv, String oldValue, String newValue){
 				selectedFile = new File(newValue);
@@ -70,6 +68,7 @@ private File selectedFile;
 		});
 		
 		delimiter.addListener(new ChangeListener<String>(){
+				@SuppressWarnings("rawtypes")
 				public void changed(ObservableValue obv, String oldValue, String newValue){
 					
 					columns.clear();
@@ -161,6 +160,7 @@ private File selectedFile;
 		CheckBox toggleGeneratePrimary = new CheckBox("Generate Primary Key");
 		TextField generatedKeyName = new TextField("RowID");
 		toggleGeneratePrimary.selectedProperty().addListener(new ChangeListener<Boolean>(){
+			@SuppressWarnings("rawtypes")
 			public void changed(ObservableValue obv, Boolean oldValue, Boolean newValue){
 					generatedKeyName.setVisible(newValue);
 			}

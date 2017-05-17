@@ -22,7 +22,8 @@ public class ValueInputCell extends TableCell<Filter, TextField>{
 	     else{
 	    	 
 	    	 item.textProperty().addListener(new ChangeListener<String>(){
-	    		 public void changed(ObservableValue arg0, String oldValue, String newValue){
+	    		 @SuppressWarnings("rawtypes")
+				public void changed(ObservableValue arg0, String oldValue, String newValue){
 	    			 sendQueryEvent();
 	    		 }
 	    	 });

@@ -86,7 +86,7 @@ public class SQLEditor extends Application{
 		border.setCenter(tableview);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	static void initSearches(){
 		TableColumn<Filter, String> columnName = new TableColumn<Filter, String>("Column");
 		columnName.setCellValueFactory(new PropertyValueFactory<>("column"));
@@ -110,7 +110,7 @@ public class SQLEditor extends Application{
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	static void initFilters(){
 		TableColumn<Filter, String> columnName = new TableColumn<Filter, String>("Column");
 		columnName.setCellValueFactory(new PropertyValueFactory<>("column"));
@@ -277,12 +277,15 @@ public class SQLEditor extends Application{
 	}
 	
 	public static void initTable(){
-		
-		ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
 		tableview.getColumns().clear();
 		filters.getItems().clear();
 		searches.getItems().clear();
 		
+		if(tableName==null){
+			return;
+		}
+		
+		ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
 		ObservableList<Filter> filterList = FXCollections.observableArrayList();
 		ObservableList<Filter> searchList = FXCollections.observableArrayList();
 		
@@ -451,6 +454,7 @@ public class SQLEditor extends Application{
 		return cellMenu;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private static ArrayList<Integer> getKeyIndices(){
 		
 		ArrayList<Integer> keyIndices = null;
@@ -505,6 +509,7 @@ public class SQLEditor extends Application{
 					 }
 				};
 				lc.setOnContextMenuRequested(e ->{
+					@SuppressWarnings("unchecked")
 					final ContextMenu tableListCellMenu = getTableListMenu(
 							((ListCell<String>)e.getSource()));
 					lc.setContextMenu(tableListCellMenu);
@@ -654,7 +659,7 @@ public class SQLEditor extends Application{
 					statement.close();
 					c.close();
 					confirmDeleteStage.close();
-					initTable();
+					initTableList();
 				}
 				catch(SQLException ex){
 					ex.printStackTrace();
@@ -763,6 +768,7 @@ public class SQLEditor extends Application{
 					statement.close();
 					c.close();
 					confirmDeleteStage.close();
+					tableName = null;
 					initTableList();
 				}
 				catch(SQLException ex){

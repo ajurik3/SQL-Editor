@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import columninfo.*;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -24,17 +23,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Pair;
 
 public class TableBuilder {
 
@@ -64,7 +60,7 @@ public class TableBuilder {
 	@SuppressWarnings("unchecked")
 	public void buildTable(){
 		
-		columnMeta = ColumnProperties.getEditableColumns();
+		columnMeta = ColumnProperties.getPropertyColumns();
 		
 		for(TableColumn<ColumnProperties, ?> tc : columnMeta.getColumns()){
 			if(tc.getText().equals("Column")){
@@ -74,11 +70,15 @@ public class TableBuilder {
 						if(param.getValue()==null)
 							return new SimpleStringProperty("");
 						
-						return new SimpleStringProperty(param.getValue().getFullName());
+						return new SimpleStringProperty(param.getValue().getFullNameValue());
 					}
 				});
 				
 				tc.setMinWidth(200);
+				
+				tc.setOnEditCommit(t -> {
+					t.getRowValue().setFullName(t.getNewValue().toString());
+				});
 			}
 		}
 		
@@ -127,6 +127,7 @@ public class TableBuilder {
 		}
 				
 		tableSelect.valueProperty().addListener(new ChangeListener<String>(){
+			@SuppressWarnings("rawtypes")
 			public void changed(ObservableValue arg0, String oldValue, String newValue){
 				fillColumnList(newValue);
 			}
@@ -139,6 +140,7 @@ public class TableBuilder {
 		CheckBox toggleGeneratePrimary = new CheckBox("Generate Primary Key");
 		TextField generatedKeyName = new TextField("RowID");
 		toggleGeneratePrimary.selectedProperty().addListener(new ChangeListener<Boolean>(){
+			@SuppressWarnings("rawtypes")
 			public void changed(ObservableValue obv, Boolean oldValue, Boolean newValue){
 					generatedKeyName.setVisible(newValue);
 			}
@@ -203,10 +205,11 @@ public class TableBuilder {
 		columnNames.setMaxWidth(200);
 		
 		columnNames.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>(){
+			@SuppressWarnings("rawtypes")
 			public void changed(ObservableValue arg0, String oldValue, String newValue){
 				
 				if(newValue!=null){
-					//add column meta data to tableview
+					//add column meta data to TableView
 					try(Connection connection = DriverManager.getConnection(session.getURL(), 
 							session.getUserName(), session.getPassword())){
 						
