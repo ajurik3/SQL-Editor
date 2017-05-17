@@ -1,9 +1,22 @@
 package editor;
 
+/*
+ * This object holds fields frequently used when establishing a new JDBC MySQL
+ * connection.
+ */
+
 public class SessionConfig {
+	
+	//MySQL user connecting to the database
 	private String username;
+	
+	//database url of the form jdbc:MySQL:subname
 	private String url;
+	
+	//MySQL user password
 	private String password;
+	
+	//database the user is currently using 
 	private String database;
 	
 	public SessionConfig(String connectionURL, String name, String pass){

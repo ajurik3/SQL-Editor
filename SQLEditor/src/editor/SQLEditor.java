@@ -235,7 +235,6 @@ public class SQLEditor extends Application{
 					filterQuery.setString(i+1, validFilters.get(i).getOperand().getText());
 				}
 
-				
 				for(int i = 0; i < validSearches.size(); i++){
 
 						filterQuery.setString(i + 1 + validFilters.size(), 
@@ -258,8 +257,6 @@ public class SQLEditor extends Application{
 				}
 				data.add(row);
 			}
-			
-			System.out.println(queryString);
 			
 			tableview.setItems(data);
 			
@@ -824,8 +821,7 @@ public class SQLEditor extends Application{
 			
 			ok.setOnAction(v -> {
 				
-				session = new SessionConfig("jdbc:mysql://" + urlInput.getText() + 
-						"/java?verifyServerCertificate=false&useSSL=true",
+				session = new SessionConfig("jdbc:mysql://" + urlInput.getText(),
 						accountInput.getText(),
 						passwordInput.getText());
 
@@ -882,7 +878,7 @@ public class SQLEditor extends Application{
 	
 	private HBox getConnectionBar(){
 		
-		Label urlLabel = new Label("Server URL:");
+		Label urlLabel = new Label("Database URL:");
 		HBox.setMargin(urlLabel, new Insets(3, 0, 0, 0));
 		TextField urlInput = new TextField("localhost:3306");
 		
@@ -897,8 +893,7 @@ public class SQLEditor extends Application{
 		Button connectButton = new Button("Connect");
 		
 		connectButton.setOnAction(e ->{
-			session = new SessionConfig("jdbc:mysql://" + urlInput.getText() + 
-					"/java?verifyServerCertificate=false&useSSL=true",
+			session = new SessionConfig("jdbc:mysql://" + urlInput.getText(),
 					usernameInput.getText(),
 					passwordInput.getText());
 

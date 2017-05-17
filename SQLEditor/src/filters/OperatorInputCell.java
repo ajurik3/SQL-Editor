@@ -6,6 +6,12 @@ import javafx.event.Event;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 
+/*
+ * This cell contains a ComboBox of strings.  When a string is clicked, the
+ * cell sends a QueryEvent to its column, which may cause the column's event
+ * handler to execute a query.
+ */
+
 
 public class OperatorInputCell extends TableCell<Filter, ComboBox<String>>{
 		
@@ -21,7 +27,7 @@ public class OperatorInputCell extends TableCell<Filter, ComboBox<String>>{
 		         setGraphic(null);
 		     } 
 		     else{
-		    	 	    	 
+		    	 //fire a QueryEvent whenever a different operator is clicked
 		    	 item.valueProperty().addListener(new ChangeListener<String>(){
 		    		@SuppressWarnings("rawtypes")
 					@Override 

@@ -8,10 +8,27 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
+/*
+ * This class contains properties which can be used to apply a filter
+ * based on user input.  The filter is applied to the data specified
+ * by its column property and the filter applied is determined by any
+ * input within the operation and operand controls.  
+ */
+
 public class Filter {
+	
+	//name of the column being filtered
 	StringProperty column;
+	
+	//contains operations which can be performed to filter the data
+	//in column
 	ObjectProperty<ComboBox<String>> operation;
+	
+	//the value with which some operation is performed on the data
 	ObjectProperty<TextField> operand;
+	
+	//When clicked, creates a Filter with the same column property 
+	//so that additional filters can be added for the same data
 	ObjectProperty<Button> copy;
 	
 	public Filter(){
@@ -28,6 +45,7 @@ public class Filter {
 		initCopy();
 	}
 	
+	//adds supported operations to ComboBox for user to select one
 	private void initOperation(){
 		operation = new SimpleObjectProperty<ComboBox<String>>();
 		ComboBox<String> operations = new ComboBox<String>();
@@ -36,19 +54,19 @@ public class Filter {
 		operation.setValue(operations);
 	}
 	
+	//creates a TextField for operand input
 	private void initOperand(){
 		operand = new SimpleObjectProperty<TextField>();
 		TextField operandInput = new TextField();
 		operandInput.setPrefColumnCount(5);
 		operand.setValue(operandInput);
-		
 	}
 	
+	//onAction property of the copy button is defined in FilterCopyCell
 	private void initCopy(){
 		copy = new SimpleObjectProperty<Button>();
 		Button duplicateButton = new Button("Copy");
 		copy.setValue(duplicateButton);
-
 	}
 
 	public String getColumn() {
