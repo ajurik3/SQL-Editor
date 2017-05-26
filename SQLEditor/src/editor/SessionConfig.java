@@ -10,7 +10,7 @@ public class SessionConfig {
 	//MySQL user connecting to the database
 	private String username;
 	
-	//database url of the form jdbc:MySQL:subname
+	//database URL of the form jdbc:MySQL:subname
 	private String url;
 	
 	//MySQL user password

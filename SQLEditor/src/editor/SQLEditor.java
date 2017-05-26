@@ -109,7 +109,6 @@ public class SQLEditor extends Application{
 		searches.getColumns().addAll(columnName, searchTerm);
 	}
 	
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	static void initFilters(){
 		TableColumn<Filter, String> columnName = new TableColumn<Filter, String>("Column");
@@ -175,7 +174,7 @@ public class SQLEditor extends Application{
 			
 			for(Filter f : filters.getItems()){
 				if((f.getOperation().getValue()!=null)&&
-						(!f.getOperand().getText().equals(""))){
+						(!f.getOperand().getText().isEmpty())){
 					
 					String queryString = "SELECT COLUMN_TYPE FROM "
 							+ "information_schema.COLUMNS WHERE TABLE_SCHEMA = \'" 
@@ -207,7 +206,7 @@ public class SQLEditor extends Application{
 			statement.close();
 			
 			for(Filter f : searches.getItems()){
-				if(!f.getOperand().getText().equals(""))
+				if(!f.getOperand().getText().isEmpty())
 					validSearches.add(f);
 			}
 			
@@ -518,6 +517,8 @@ public class SQLEditor extends Application{
 			}
 		});
 		
+		if(session.getDatabase()==null)
+			return;
 		
 		ObservableList<String> data = FXCollections.observableArrayList();
 		
@@ -538,9 +539,10 @@ public class SQLEditor extends Application{
 			tables.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>(){
 				@Override
 				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-						if(newValue!=null)
+						if(newValue!=null){
 							tableName = newValue;
-							initTable();   
+							initTable();
+						}
 				}
 			});
 			
@@ -839,6 +841,7 @@ public class SQLEditor extends Application{
 
 				    	for(MenuItem m : databaseMenu.getItems()){
 				    		m.setOnAction( ev->{
+				    			tableName = null;
 				    			session.setDatabase(m.getText());
 				    			initTableList();
 				    		});
