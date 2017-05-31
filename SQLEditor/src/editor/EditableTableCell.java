@@ -30,7 +30,7 @@ public class EditableTableCell extends TableCell<ObservableList<String>, String>
 	public EditableTableCell(){
 		super();
 		
-		//start edit and display editInput textfield if cell is
+		//start edit and display editInput TextField if cell is
 		//double clicked
 		setOnMouseClicked(e -> {
 			if(e.getClickCount()==2)
@@ -63,7 +63,7 @@ public class EditableTableCell extends TableCell<ObservableList<String>, String>
 		if(!isEditable()||!getTableView().isEditable()||!getTableColumn().isEditable())
 			return;
 		
-		//replace text with dynamically created textfield and give it focus
+		//replace text with dynamically created TextField and give it focus
 		super.startEdit();
 		createTextField();
 		setText("");
@@ -76,12 +76,12 @@ public class EditableTableCell extends TableCell<ObservableList<String>, String>
 	}
 	
 	
-	//this function dynamically creates a new textfield to ensure that it does not
+	//this function dynamically creates a new TextField to ensure that it does not
 	//contain side effects from when the cell displays other data in the model
 	void createTextField(){
 		editInput = new TextField((String)getItem());
 	
-		//commit edit when the textfield loses focus
+		//commit edit when the TextField loses focus
 		editInput.focusedProperty().addListener(new InvalidationListener(){
 			@Override public void invalidated(Observable arg0){
 					if(!((ReadOnlyBooleanProperty)arg0).getValue())
@@ -91,7 +91,7 @@ public class EditableTableCell extends TableCell<ObservableList<String>, String>
 	}
 	
 	//this function sets the text to a new item and removes any
-	//textfield which may be visible, which is necessary if the
+	//TextField which may be visible, which is necessary if the
 	//cell is being used to display a different item from the data model
 	@Override
     public void updateItem(String item, boolean empty) {
@@ -119,13 +119,16 @@ public class EditableTableCell extends TableCell<ObservableList<String>, String>
 		
 		setGraphic(null);
 
+		setItem(edit);
+		setText((String)getItem());
+		
+		if(tablePos==null)
+			return;
+		
 		int rowIndex = getTableRow().getIndex();
 		int columnIndex = tablePos.getColumn();
 		
 		getTableView().getItems().get(rowIndex).set(columnIndex, edit);
-		
-		setItem(edit);
-		setText((String)getItem());
 		
 		final TableView<ObservableList<String>> table = getTableView();
 		

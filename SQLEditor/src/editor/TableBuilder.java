@@ -74,7 +74,19 @@ public class TableBuilder {
  * Source Table(s) and Column(s) (ComboBox and ListView)
  * Optional Auto-Incremented Primary Key Name (CheckBox and TextField)
  */
-	public void buildTable(){		
+	public void buildTable(TableList tableList){		
+		
+		if(session==null){
+			new NotificationWindow("Connection required", 
+					"You must connect to a database server to use this feature");
+			return;
+		}
+		
+		if(session.getDatabase()==null){
+			new NotificationWindow("Database Required", 
+					"You must select a database from the menu to add this table to.");
+			return;
+		}
 		
 		Stage builderWindow = new Stage();
 		builderWindow.setTitle("Define Table");
@@ -127,8 +139,10 @@ public class TableBuilder {
 		
 		ok.setOnAction(e->{
 			if(checkLegalPrimary(toggleGeneratePrimary, generatedKeyName.getText())){
-				if(createTable())
+				if(createTable()){
 					builderWindow.close();
+					tableList.updateList();
+				}
 			}
 			else{
 				
@@ -369,9 +383,7 @@ public class TableBuilder {
 				return false;
 				
 			statement.close();
-			connection.close();
-				
-			SQLEditor.initTableList();
+			connection.close();	
 		}
 		catch(SQLException ex){
 			ex.printStackTrace();

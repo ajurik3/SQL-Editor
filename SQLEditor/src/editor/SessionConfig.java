@@ -23,7 +23,6 @@ public class SessionConfig {
 		url = connectionURL;
 		username = name;
 		password = pass;
-		database = "java";
 	}
 	
 	public SessionConfig(String connectionURL, String name, String pass, String databaseName){
@@ -33,35 +32,35 @@ public class SessionConfig {
 		database = databaseName;
 	}
 	
-	void setDatabase(String name){
+	public void setDatabase(String name){
 		database = name;
 	}
 	
-	String getDatabase(){
+	public String getDatabase(){
 		return database;
 	}
 	
-	void setUserName(String name){
+	public void setUserName(String name){
 		username = name;
 	}
 	
-	void setURL(String connectionURL){
+	public void setURL(String connectionURL){
 		url = connectionURL;
 	}
 	
-	void setPassword(String pass){
+	public void setPassword(String pass){
 		password = pass;
 	}
 	
-	String getUserName(){
+	public String getUserName(){
 		return username;
 	}
 	
-	String getURL(){
+	public String getURL(){
 		return url;
 	}
 	
-	String getPassword(){
+	public String getPassword(){
 		return password;
 	}
 }

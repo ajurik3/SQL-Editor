@@ -84,6 +84,26 @@ public class ColumnBuilder {
 	 * Column Definition Expression (TextArea)
 	 */
 	public void buildColumn(){
+		
+		if(session==null){
+			new NotificationWindow("Connection required", 
+					"You must connect to a database server to use this feature");
+			return;
+		}
+		
+		if(session.getDatabase()==null){
+			new NotificationWindow("Database Required", 
+					"You must select a database and table to add this column to.");
+			return;
+		}
+		
+		if(SQLEditor.getTableName().isEmpty()){
+			new NotificationWindow("Table Required", 
+					"You must select a table from the list to add this column to.");
+			return;
+		}
+		
+		
 		Stage builderWindow = new Stage();
 		
 		//new column name input
@@ -99,7 +119,7 @@ public class ColumnBuilder {
 		Label tableSelectLabel = new Label("Table: ");
 		HBox.setMargin(tableSelectLabel, new Insets(3, 0, 0, 0));
 		ComboBox<String> tableSelect = new ComboBox<String>();
-			
+		
 		if(session!=null){
 			fillTableComboBox(tableSelect);
 		}
@@ -190,7 +210,7 @@ public class ColumnBuilder {
 	/*
 	 * This function fills the ComboBox with all tables in the current database.
 	 */
-	private void fillTableComboBox(ComboBox<String> tableSelect){
+	private void fillTableComboBox(ComboBox<String> tableSelect){		
 		try (Connection connection = DriverManager.getConnection(session.getURL(), 
 				session.getUserName(), session.getPassword())) 
 		{
@@ -206,7 +226,7 @@ public class ColumnBuilder {
 				tableSelect.getItems().add(tables.getString(1));
 			}
 			
-			//set default value to column currently viewed in main TableView
+			//set default value to table currently viewed in main TableView
 			tableSelect.setValue(SQLEditor.getTableName());
 			
 			//fill column list with default selected table if not null

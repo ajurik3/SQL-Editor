@@ -71,8 +71,7 @@ public class FileImporter {
 	//current connection information
 	private SessionConfig session;
 	
-	FileImporter(SessionConfig currentSession, ListView<String> tables, 
-			TableView<ObservableList<String>> currentTableReference){
+	FileImporter(SessionConfig currentSession){
 		session = currentSession;
 		
 		//when pathName is changed, check if column 
@@ -114,7 +113,7 @@ public class FileImporter {
 	 * Column Properties (TableView)
 	 * Optional Auto-Incremented Primary Key Name (CheckBox and TextField)
 	 */
-	public void getFile(){
+	public void getFile(TableList tableList){
 		Stage importWindow = new Stage();
 		
 		//imported table name input
@@ -193,8 +192,10 @@ public class FileImporter {
 		
 		ok.setOnAction(e ->{
 			if(checkLegalPrimary(toggleGeneratePrimary, generatedKeyName.getText())){
-				if(importTable())
+				if(importTable()){
+					tableList.updateList();
 					importWindow.close();
+				}
 			}
 			else{
 				new NotificationWindow("Multiple Primary Key Definitions",
@@ -314,9 +315,6 @@ public class FileImporter {
 						" INT AUTO_INCREMENT NOT NULL PRIMARY KEY FIRST;";
 				statement.execute(statementString);
 			}
-				
-			//refresh table list on main screen
-			SQLEditor.initTableList();
 				
 			statement.close();
 			connection.close();
